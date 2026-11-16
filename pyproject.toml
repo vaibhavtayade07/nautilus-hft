@@ -1,0 +1,30 @@
+[project]
+name = "nautilus-hft"
+version = "0.1.0"
+description = "HFT-lite micro-scalp Milestone 0+1: Bybit TESTNET node + latency benchmark (NautilusTrader)"
+readme = "README.md"
+requires-python = ">=3.13"
+# Dependency approach: PyPI wheel (NOT a local editable path). The reference
+# checkout at ../nautilus_trader resolves nautilus_trader from its .venv
+# site-packages (prebuilt 1.231.0 wheel), so a local path dep would force a
+# full Rust rebuild via the repo toolchain. Pin to the proven wheel version.
+dependencies = [
+    "nautilus_trader==1.231.0",
+]
+
+[project.scripts]
+nautilus-hft = "nautilus_hft.main:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+# Ship both the strategy package and the top-level `config` package so that
+# `from config.settings import ...` works identically from a source checkout
+# (project root on sys.path) and from an installed wheel.
+[tool.hatch.build.targets.wheel]
+packages = ["src/nautilus_hft", "config"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
